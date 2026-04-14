@@ -1,0 +1,12 @@
+# urls.py
+from django.urls import path, include
+from rest_framework.routers import DefaultRouter
+from .views import ShortenedURLViewSet, redirect_to_original
+
+router = DefaultRouter()
+router.register(r'urls', ShortenedURLViewSet)
+
+urlpatterns = [
+    path('', include(router.urls)),
+    path("<str:short_code>/", redirect_to_original, name="redirect")
+]
