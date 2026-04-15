@@ -39,6 +39,7 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    'corsheaders',
     'rest_framework',
     'rest_framework_simplejwt',
     'rest_framework_simplejwt.token_blacklist',
@@ -48,6 +49,7 @@ INSTALLED_APPS = [
 ]
 
 MIDDLEWARE = [
+    'corsheaders.middleware.CorsMiddleware',
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
@@ -58,6 +60,30 @@ MIDDLEWARE = [
 ]
 
 ROOT_URLCONF = 'config.urls'
+
+CORS_ALLOWED_ORIGINS = [
+    "http://localhost:5173",      # Vite dev сервер (React)
+    "http://127.0.0.1:5173",      # на всяк випадок
+]
+
+# Якщо використовуєш токени (Bearer) і credentials
+CORS_ALLOW_CREDENTIALS = True
+
+# Дозволяємо потрібні заголовки (важливо для Authorization)
+CORS_ALLOW_HEADERS = [
+    'accept',
+    'accept-encoding',
+    'authorization',
+    'content-type',
+    'dnt',
+    'origin',
+    'user-agent',
+    'x-csrftoken',
+    'x-requested-with',
+]
+
+# Опціонально: обмежити тільки API ендпоінти
+CORS_URLS_REGEX = r'^/.*$'   # або r'^/api/.*$' якщо в тебе префікс /api/
 
 TEMPLATES = [
     {
