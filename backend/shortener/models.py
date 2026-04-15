@@ -20,7 +20,18 @@ class ShortenedURL(BaseModel):
         help_text="Короткий код, наприклад: aB3x9K"
     )
 
-    # user прив'яжемо пізніше
+    clicks = models.IntegerField(
+        blank=True, 
+        null=True,
+        default=0
+    )
+
+    notes = models.CharField(
+        max_length=2048, 
+        blank=True, 
+        null=True
+    )
+    
     user = models.ForeignKey(
         User,
         on_delete=models.CASCADE,

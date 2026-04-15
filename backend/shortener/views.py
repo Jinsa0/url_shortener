@@ -24,4 +24,6 @@ class ShortenedURLViewSet(viewsets.ModelViewSet):
 
 def redirect_to_original(request, short_code):
     url_obj = get_object_or_404(ShortenedURL, short_code=short_code)
+    url_obj.clicks += 1
+    url_obj.save(update_fields=['clicks'])
     return redirect(url_obj.original_url)
