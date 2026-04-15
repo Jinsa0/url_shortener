@@ -2,7 +2,7 @@
 import React from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import Button from '../ui/Button';
-import type { User } from '../../types/types';
+import type { User } from '../../types/auth';
 
 interface NavbarProps {
     user: User | null;

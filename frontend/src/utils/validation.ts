@@ -1,5 +1,5 @@
 // src/utils/validation.ts
-import type { LoginCredentials, RegisterData } from '../types/types';
+import type { LoginCredentials, RegisterData } from '../types/auth';
 
 const DJANGO_USERNAME_REGEX = /^[\w.@+-]+$/;
 const EMAIL_REGEX = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;

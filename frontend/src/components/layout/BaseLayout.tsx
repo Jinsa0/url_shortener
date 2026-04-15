@@ -2,7 +2,7 @@
 import React, { useEffect } from 'react';
 import Navbar from './Navbar';
 import Footer from './Footer';
-import type { User } from '../../types/types';
+import type { User } from '../../types/auth';
 
 /**
  * Пропси компонента BaseLayout

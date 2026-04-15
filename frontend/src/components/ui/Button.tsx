@@ -1,6 +1,6 @@
 // src/components/ui/Button.tsx
 import React from 'react';
-import type { ButtonVariant, ButtonSize } from "../../types/types.ts"
+import type { ButtonVariant, ButtonSize } from "../../types/other.ts"
 
 export interface ButtonProps extends React.ButtonHTMLAttributes<HTMLButtonElement> {
     variant?: ButtonVariant;

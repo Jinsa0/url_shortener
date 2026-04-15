@@ -5,6 +5,7 @@ import { useAuth } from './hooks/useAuth.ts';
 import BaseLayout from './components/layout/BaseLayout';
 import { LoginForm } from './components/ui/LoginForm';
 import { RegisterForm } from './components/ui/RegisterForm';
+import { Dashboard } from './pages/Dashboard';
 
 const ProtectedRoute = ({ children }: { children: React.ReactNode }) => {
     const { user } = useAuth();
@@ -21,22 +22,25 @@ function AppContent() {
     return (
         <BaseLayout user={user} onLogout={logout}>
             <Routes>
-                <Route path="/" element={
-                    user ? (
-                        <section className="hero-card">
-                            <h1 className="hero-card__title">
-                                Ласкаво просимо, {user.username}!
-                            </h1>
-                            <p className="hero-card__subtitle">
-                                Ви успішно увійшли в систему.
-                            </p>
-                        </section>
-                    ) : <Navigate to="/login" />
-                } />
+                <Route
+                    path="/"
+                    element={
+                        user
+                            ? <Navigate to="/dashboard" />
+                            : <Navigate to="/login" />
+                    }
+                />
 
                 <Route path="/login" element={!user ? <LoginForm /> : <Navigate to="/" />} />
                 <Route path="/register" element={!user ? <RegisterForm /> : <Navigate to="/" />} />
-
+                <Route
+                    path="/dashboard"
+                    element={
+                        <ProtectedRoute>
+                            <Dashboard />
+                        </ProtectedRoute>
+                    }
+                />
                 {/* Захищені маршрути */}
                 <Route path="/profile" element={
                     <ProtectedRoute>

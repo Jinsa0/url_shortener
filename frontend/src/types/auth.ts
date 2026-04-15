@@ -1,7 +1,4 @@
-// src/types/types.ts
-
-export type ButtonVariant = 'primary' | 'secondary' | 'outline' | 'ghost' | 'danger';
-export type ButtonSize = 'sm' | 'md' | 'lg';
+// src/types/auth.ts
 
 export interface User {
     id: number;
