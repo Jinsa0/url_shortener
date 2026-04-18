@@ -28,6 +28,7 @@ DEBUG = os.environ.get('DEBUG', True)
 
 ALLOWED_HOSTS = ["*"]
 
+SHORTENER_DOMAIN = "localhost:8000"
 
 # Application definition
 
@@ -38,12 +39,17 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    'corsheaders',
+    'rest_framework',
+    'rest_framework_simplejwt',
+    'rest_framework_simplejwt.token_blacklist',
     'main',
     'accounts',
-
+    'shortener',
 ]
 
 MIDDLEWARE = [
+    'corsheaders.middleware.CorsMiddleware',
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
@@ -54,6 +60,35 @@ MIDDLEWARE = [
 ]
 
 ROOT_URLCONF = 'config.urls'
+
+CORS_ALLOWED_ORIGINS = [
+    "http://localhost:5173",      # Vite dev сервер (React)
+    "http://127.0.0.1:5173",      # на всяк випадок
+]
+
+CSRF_TRUSTED_ORIGINS = [
+    "http://localhost:5173",
+    "http://127.0.0.1:5173",
+]
+
+# Якщо використовуєш токени (Bearer) і credentials
+CORS_ALLOW_CREDENTIALS = True
+
+# Дозволяємо потрібні заголовки (важливо для Authorization)
+CORS_ALLOW_HEADERS = [
+    'accept',
+    'accept-encoding',
+    'authorization',
+    'content-type',
+    'dnt',
+    'origin',
+    'user-agent',
+    'x-csrftoken',
+    'x-requested-with',
+]
+
+# Опціонально: обмежити тільки API ендпоінти
+CORS_URLS_REGEX = r'^/.*$'   # або r'^/api/.*$' якщо в тебе префікс /api/
 
 TEMPLATES = [
     {
@@ -73,6 +108,26 @@ TEMPLATES = [
 WSGI_APPLICATION = 'config.wsgi.application'
 
 
+REST_FRAMEWORK = {
+    'DEFAULT_AUTHENTICATION_CLASSES': (
+        'rest_framework_simplejwt.authentication.JWTAuthentication',
+    ),
+
+    'DEFAULT_PERMISSION_CLASSES': (
+        'rest_framework.permissions.AllowAny',
+    ),
+}
+
+# === JWT налаштування ===
+from datetime import timedelta
+
+SIMPLE_JWT = {
+    'ACCESS_TOKEN_LIFETIME': timedelta(minutes=60),
+    'REFRESH_TOKEN_LIFETIME': timedelta(days=7),
+    'ROTATE_REFRESH_TOKENS': True,
+    'BLACKLIST_AFTER_ROTATION': True,
+    'AUTH_HEADER_TYPES': ('Bearer',),
+}
 # Database
 # https://docs.djangoproject.com/en/5.2/ref/settings/#databases
 
@@ -134,5 +189,3 @@ LOGOUT_REDIRECT_URL = '/login/'
 # https://docs.djangoproject.com/en/5.2/ref/settings/#default-auto-field
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
-
-CORS_ALLOW_ALL_ORIGINS = True
