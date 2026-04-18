@@ -4,7 +4,7 @@ from rest_framework.routers import DefaultRouter
 from .views import ShortenedURLViewSet, redirect_to_original
 
 router = DefaultRouter()
-router.register(r'urls', ShortenedURLViewSet)
+router.register(r'urls', ShortenedURLViewSet, basename='shortenedurl')
 
 urlpatterns = [
     path('', include(router.urls)),

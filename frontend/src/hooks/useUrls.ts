@@ -1,10 +1,21 @@
 import { useEffect, useState } from 'react';
-import { getUrls, createUrl, deleteUrl } from '../api/urls';
+import { getUrl, getUrls, createUrl, deleteUrl } from '../api/urls';
 import type { ShortenedURL, ShortenedURLCreate } from '../types/url';
 
 export const useUrls = () => {
     const [urls, setUrls] = useState<ShortenedURL[]>([]);
     const [loading, setLoading] = useState(true);
+
+    const fetchUrl = async (id: number) => {
+        try {
+            const data = await getUrl(id);
+            setUrls(prev => prev.map(u => u.id === id ? data : u));
+        } catch(e) {
+            console.error("Помилка отримання URL", e);
+        } finally {
+            setLoading(false)
+        }
+    }
 
     const fetchUrls = async () => {
         try {
@@ -31,5 +42,5 @@ export const useUrls = () => {
         fetchUrls();
     }, [])
 
-    return { urls, loading, addUrl, removeUrl}
+    return { urls, loading, addUrl, removeUrl, fetchUrl };
 };

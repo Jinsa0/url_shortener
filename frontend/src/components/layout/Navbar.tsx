@@ -29,9 +29,14 @@ export const Navbar: React.FC<NavbarProps> = ({ user, onLogout }) => {
 
                     {user ? (
                         <>
-                            <span className="app-nav__user">
+                            <Button
+                                variant="outline"
+                                size="sm"
+                                onClick={() => navigate('/dashboard')}
+                                className="app-nav__user"
+                            >
                                 Привіт, <strong>{user.username}</strong>
-                            </span>
+                            </Button>
                             <Button variant="ghost" size="sm" onClick={onLogout}>
                                 Вийти
                             </Button>

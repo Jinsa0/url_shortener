@@ -6,6 +6,7 @@ import BaseLayout from './components/layout/BaseLayout';
 import { LoginForm } from './components/ui/LoginForm';
 import { RegisterForm } from './components/ui/RegisterForm';
 import { Dashboard } from './pages/Dashboard';
+import { Main } from './pages/Main';
 
 const ProtectedRoute = ({ children }: { children: React.ReactNode }) => {
     const { user } = useAuth();
@@ -26,13 +27,21 @@ function AppContent() {
                     path="/"
                     element={
                         user
-                            ? <Navigate to="/dashboard" />
+                            ? <Navigate to="/main" />
                             : <Navigate to="/login" />
                     }
                 />
 
                 <Route path="/login" element={!user ? <LoginForm /> : <Navigate to="/" />} />
                 <Route path="/register" element={!user ? <RegisterForm /> : <Navigate to="/" />} />
+                <Route
+                    path="/main"
+                    element={
+                        <ProtectedRoute>
+                            <Main />
+                        </ProtectedRoute>
+                    }
+                />
                 <Route
                     path="/dashboard"
                     element={

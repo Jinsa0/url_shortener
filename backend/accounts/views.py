@@ -2,16 +2,22 @@
 from rest_framework import generics, status
 from rest_framework.response import Response
 from rest_framework.views import APIView
-from rest_framework.permissions import IsAuthenticated
+from rest_framework.permissions import AllowAny, IsAuthenticated
 from rest_framework_simplejwt.views import TokenObtainPairView, TokenRefreshView, TokenBlacklistView
 from django.contrib.auth import get_user_model
 from .serializers import RegisterSerializer
+from django.utils.decorators import method_decorator
+from django.views.decorators.csrf import csrf_exempt
+
 
 User = get_user_model()
 
+@method_decorator(csrf_exempt, name='dispatch')
 class RegisterView(generics.CreateAPIView):
     queryset = User.objects.all()
     serializer_class = RegisterSerializer
+    permission_classes = [AllowAny]
+    authentication_classes = []
 
     def create(self, request, *args, **kwargs):
         serializer = self.get_serializer(data=request.data)
@@ -24,10 +30,11 @@ class RegisterView(generics.CreateAPIView):
         }, status=status.HTTP_201_CREATED)
 
 
-# Використовуємо готові JWT views від simplejwt
+@method_decorator(csrf_exempt, name='dispatch')
 class LoginView(TokenObtainPairView):
-    pass   # використовує вбудований serializer
-
+    permission_classes = [AllowAny]
+    authentication_classes = []
+    
 class RefreshTokenView(TokenRefreshView):
     pass
 

@@ -1,6 +1,7 @@
 // src/contexts/AuthContext.tsx
 import { createContext, useState, useEffect, type ReactNode } from 'react';
-import { api } from '../api/api';
+import { authApi } from '../api/authApi';
+
 import type {
     AuthContextType,
     AuthTokens,
@@ -68,11 +69,11 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
         setIsLoading(true);
 
         try {
-            const { data } = await api.post('login/', credentials);
+            const { data } = await authApi.post('login/', credentials);
 
             const { access, refresh } = data as AuthTokens;
 
-            const me = await api.get('me/', {
+            const me = await authApi.get('me/', {
                 headers: {
                     Authorization: `Bearer ${access}`,
                 },
@@ -100,7 +101,7 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
         setIsLoading(true);
 
         try {
-            await api.post('register/', data);
+            await authApi.post('register/', data);
 
             await login({
                 username: data.username,
@@ -132,7 +133,7 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
         if (!tokens?.refresh) return;
 
         try {
-            const { data } = await api.post('refresh/', {
+            const { data } = await authApi.post('refresh/', {
                 refresh: tokens.refresh,
             });
 

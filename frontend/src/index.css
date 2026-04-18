@@ -530,6 +530,134 @@ body::-webkit-scrollbar-thumb:hover {
   margin: 0;
 }
 
+/* ==================== STATS PAGE ==================== */
+.stats-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 1.5rem;
+}
+
+.stats-header__title {
+  margin: 0;
+}
+
+.stats-layout {
+  display: grid;
+  gap: 1rem;
+}
+
+.stats-columns {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+  gap: 1rem;
+}
+
+.stats-column {
+  display: grid;
+  gap: 1rem;
+  align-content: start;
+}
+
+.stats-card {
+  background: linear-gradient(180deg, #1e293b 0%, var(--bg-card) 100%);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-xl);
+  padding: 1rem;
+  box-shadow: var(--shadow-md);
+}
+
+.stats-card--alive {
+  animation: statsFadeIn 0.5s ease both;
+}
+
+.stats-card--alive:hover {
+  border-color: var(--primary-light);
+  box-shadow: var(--shadow-lg);
+  transform: translateY(-3px);
+}
+
+.stats-card__title {
+  margin-top: 0;
+  margin-bottom: 0.8rem;
+}
+
+.stats-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  gap: 0.8rem;
+}
+
+.stats-grid__item {
+  color: var(--text-secondary);
+}
+
+.stats-grid__item strong {
+  color: var(--text-primary);
+}
+
+.stats-long-url {
+  margin-top: 0.7rem;
+  margin-bottom: 0;
+  word-break: break-all;
+  color: var(--text-light);
+}
+
+.stats-top-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  gap: 1rem;
+}
+
+.stats-url-items {
+  display: grid;
+  gap: 0.8rem;
+}
+
+.stats-empty {
+  margin-bottom: 0;
+  opacity: 0.75;
+  color: var(--text-muted);
+}
+
+.stats-list {
+  margin: 0;
+  padding-left: 1.2rem;
+}
+
+.stats-list__item {
+  margin-bottom: 0.5rem;
+}
+
+.stats-list__code {
+  font-weight: 600;
+  color: var(--primary-light);
+}
+
+.stats-list__url {
+  opacity: 0.88;
+  word-break: break-all;
+  color: var(--text-secondary);
+}
+
+.stats-list__meta {
+  font-size: 0.9rem;
+  opacity: 0.85;
+  color: var(--text-muted);
+}
+
+@keyframes statsFadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
 /* ==================== HERO ==================== */
 .hero-card {
   text-align: center;
@@ -589,6 +717,15 @@ body::-webkit-scrollbar-thumb:hover {
   .hero-card,
   .panel-card {
     padding: 28px 24px;
+  }
+
+  .stats-header {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .stats-columns {
+    grid-template-columns: 1fr;
   }
 }
 
