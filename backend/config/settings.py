@@ -87,8 +87,8 @@ CORS_ALLOW_HEADERS = [
     'x-requested-with',
 ]
 
-# Опціонально: обмежити тільки API ендпоінти
-CORS_URLS_REGEX = r'^/.*$'   # або r'^/api/.*$' якщо в тебе префікс /api/
+# Застосовуємо CORS до всіх роутів, бо auth-ендпоінти не мають /api/ префіксу.
+CORS_URLS_REGEX = r"^/.*$"
 
 TEMPLATES = [
     {
