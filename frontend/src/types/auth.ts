@@ -6,6 +6,9 @@ export interface User {
     email?: string;
     first_name?: string;
     last_name?: string;
+    slug?: string;
+    bio?: string;
+    avatar?: string | null;
 }
 
 export interface AuthTokens {

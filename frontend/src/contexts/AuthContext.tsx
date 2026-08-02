@@ -1,6 +1,6 @@
 // src/contexts/AuthContext.tsx
 import { createContext, useState, useEffect, type ReactNode } from 'react';
-import { authApi } from '../api/authApi';
+import { authApi, fetchAccountProfile } from '../api/authApi';
 
 import type {
     AuthContextType,
@@ -37,6 +37,17 @@ const toApiError = (error: unknown, fallbackMessage: string): ApiError => {
     return { message: fallbackMessage };
 };
 
+const normalizeUser = (data: Partial<User> | Record<string, unknown>, fallbackUsername: string): User => ({
+    id: Number(data.id ?? 0),
+    username: String(data.username ?? fallbackUsername),
+    email: typeof data.email === 'string' ? data.email : undefined,
+    first_name: typeof data.first_name === 'string' ? data.first_name : undefined,
+    last_name: typeof data.last_name === 'string' ? data.last_name : undefined,
+    slug: typeof data.slug === 'string' ? data.slug : undefined,
+    bio: typeof data.bio === 'string' ? data.bio : undefined,
+    avatar: typeof data.avatar === 'string' ? data.avatar : null,
+});
+
 export const AuthProvider = ({ children }: AuthProviderProps) => {
     const [user, setUser] = useState<User | null>(null);
     const [tokens, setTokens] = useState<AuthTokens | null>(null);
@@ -52,8 +63,9 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
 
         if (access && refresh && userData) {
             try {
+                const parsedUser = JSON.parse(userData) as User;
                 setTokens({ access, refresh });
-                setUser(JSON.parse(userData) as User);
+                setUser(normalizeUser(parsedUser, parsedUser.username || 'user'));
             } catch {
                 localStorage.clear();
             }
@@ -72,21 +84,15 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
             const { data } = await authApi.post('login/', credentials);
 
             const { access, refresh } = data as AuthTokens;
-
-            const me = await authApi.get('me/', {
-                headers: {
-                    Authorization: `Bearer ${access}`,
-                },
-            });
-
-            const userData = me.data as User;
+            const userData = await fetchAccountProfile(access);
+            const normalizedUser = normalizeUser(userData, credentials.username);
 
             setTokens({ access, refresh });
-            setUser(userData);
+            setUser(normalizedUser);
 
             localStorage.setItem('accessToken', access);
             localStorage.setItem('refreshToken', refresh);
-            localStorage.setItem('user', JSON.stringify(userData));
+            localStorage.setItem('user', JSON.stringify(normalizedUser));
         } catch (error: unknown) {
             throw toApiError(error, 'Невірний логін або пароль');
         } finally {

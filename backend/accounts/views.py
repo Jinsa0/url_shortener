@@ -1,56 +1,68 @@
-# backend/accounts/views.py
-from rest_framework import generics, status
-from rest_framework.response import Response
-from rest_framework.views import APIView
-from rest_framework.permissions import AllowAny, IsAuthenticated
-from rest_framework_simplejwt.views import TokenObtainPairView, TokenRefreshView, TokenBlacklistView
-from django.contrib.auth import get_user_model
-from .serializers import RegisterSerializer
+from django.contrib.auth import authenticate, login, logout, get_user_model
 from django.utils.decorators import method_decorator
 from django.views.decorators.csrf import csrf_exempt
+from django.shortcuts import get_object_or_404
 
+from rest_framework.views import APIView
+from rest_framework.response import Response
+from rest_framework import status
+from rest_framework_simplejwt.views import TokenRefreshView, TokenBlacklistView
+from rest_framework.permissions import IsAuthenticated
+
+from . import serializers
+from main import utils, permissions 
 
 User = get_user_model()
 
-@method_decorator(csrf_exempt, name='dispatch')
-class RegisterView(generics.CreateAPIView):
-    queryset = User.objects.all()
-    serializer_class = RegisterSerializer
-    permission_classes = [AllowAny]
-    authentication_classes = []
+class RegisterView(APIView):
+    permission_classes = [permissions.IsAnonymous]
 
-    def create(self, request, *args, **kwargs):
-        serializer = self.get_serializer(data=request.data)
+    def post(self, request):
+        serializer = serializers.UserRegisterSerializer(data=request.data)
+
         serializer.is_valid(raise_exception=True)
-        user = serializer.save()
-        
-        return Response({
-            "message": "Користувач успішно зареєстрований",
-            "username": user.username
-        }, status=status.HTTP_201_CREATED)
+        serializer.save()
+        return Response(serializer.data, status=status.HTTP_201_CREATED)
 
-
-@method_decorator(csrf_exempt, name='dispatch')
-class LoginView(TokenObtainPairView):
-    permission_classes = [AllowAny]
-    authentication_classes = []
+class LoginView(APIView):
+    permission_classes = [permissions.IsAnonymous]
     
+    def post(self, request):
+        serializer = serializers.UserLoginSerializer(data=request.data)
+
+        serializer.is_valid(raise_exception=True)
+        user = authenticate(request=request, **serializer.validated_data)
+        if user:
+            login(request, user)
+            token = utils.get_tokens_for_user(user)
+            return Response(token, status=status.HTTP_200_OK)
+        return Response({"detail": "Invalid username or password."}, status=status.HTTP_401_UNAUTHORIZED)
+
 class RefreshTokenView(TokenRefreshView):
     pass
 
 class LogoutView(TokenBlacklistView):
     pass
 
-
-class UserDetailView(APIView):
+class AccountView(APIView):
     permission_classes = [IsAuthenticated]
 
-    def get(self, request):
-        user = request.user
-        return Response({
-            "id": user.id,
-            "username": user.username,
-            "email": user.email,
-            "first_name": user.first_name,
-            "last_name": user.last_name,
-        })
+    def get(self, request, slug=None):
+        if slug:
+            account = get_object_or_404(User, slug=slug)
+        else:
+            account = request.user
+
+        serializer = serializers.AccountSerializer(account)
+        return Response(serializer.data, status=status.HTTP_200_OK)
+
+    def patch(self, request, slug=None):
+        account = request.user if not slug or slug == request.user.slug else get_object_or_404(User, slug=slug)
+        if account != request.user:
+            self.permission_denied(request, message="Only owner can edit their account.")
+
+        serializer = serializers.AccountSerializer(instance=account, data=request.data, partial=True)
+        serializer.is_valid(raise_exception=True)
+        serializer.save()
+
+        return Response(serializer.data, status=status.HTTP_200_OK)

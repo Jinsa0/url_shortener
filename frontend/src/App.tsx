@@ -7,6 +7,7 @@ import { LoginForm } from './components/ui/LoginForm';
 import { RegisterForm } from './components/ui/RegisterForm';
 import { Dashboard } from './pages/Dashboard';
 import { Main } from './pages/Main';
+import { ProfilePage } from './pages/Profile';
 
 const ProtectedRoute = ({ children }: { children: React.ReactNode }) => {
     const { user } = useAuth();
@@ -51,11 +52,9 @@ function AppContent() {
                     }
                 />
                 {/* Захищені маршрути */}
-                <Route path="/profile" element={
+                <Route path="/profile/:slug?" element={
                     <ProtectedRoute>
-                        <section className="panel-card">
-                            Профіль користувача
-                        </section>
+                        <ProfilePage />
                     </ProtectedRoute>
                 } />
             </Routes>
