@@ -1,6 +1,6 @@
 // src/contexts/AuthContext.tsx
 import { createContext, useState, useEffect, type ReactNode } from 'react';
-import { authApi, fetchAccountProfile } from '../api/authApi';
+import { authApi, fetchAccountProfile, updateProfile } from '../api/authApi';
 
 import type {
     AuthContextType,
@@ -8,7 +8,8 @@ import type {
     User,
     LoginCredentials,
     RegisterData,
-    ApiError
+    ApiError,
+    UpdateUserData
 } from '../types/auth';
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
@@ -101,6 +102,26 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
     };
 
     /**
+     * UPDATE USER
+     */
+    const updateUser = async (data: UpdateUserData): Promise<void> => {
+        setIsLoading(true);
+
+        try {
+            if (!tokens) {logout(); return}
+            const access = tokens.access;
+            const updatedUser = await updateProfile(access, data)
+
+            setUser(updatedUser)
+            localStorage.setItem('user', JSON.stringify(updatedUser));
+        } catch (error: unknown) {
+            throw toApiError(error, 'Не знайдено користувача');
+        } finally {
+            setIsLoading(false);
+        }
+    };
+
+    /**
      * REGISTER
      */
     const register = async (data: RegisterData): Promise<void> => {
@@ -162,6 +183,7 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
                 tokens,
                 isLoading,
                 login,
+                updateUser,
                 register,
                 logout,
                 refreshToken,

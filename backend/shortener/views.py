@@ -8,7 +8,7 @@ from rest_framework.response import Response
 from .models import ShortenedURL
 from .serializers import ShortenedURLSerializer
 from django.shortcuts import get_object_or_404, redirect
-from .services import generate_unique_short_code
+from main.utils import generate_unique_short_code
 
 class ShortenedURLViewSet(viewsets.ModelViewSet):
     serializer_class = ShortenedURLSerializer

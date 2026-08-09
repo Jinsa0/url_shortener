@@ -1,5 +1,5 @@
 // src/utils/validation.ts
-import type { LoginCredentials, RegisterData } from '../types/auth';
+import type { LoginCredentials, RegisterData, UpdateUserData } from '../types/auth';
 
 const DJANGO_USERNAME_REGEX = /^[\w.@+-]+$/;
 const EMAIL_REGEX = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
@@ -55,6 +55,33 @@ export const validateRegisterData = (data: RegisterData): string | null => {
 
     if (data.password !== data.password2) {
         return 'Паролі не співпадають.';
+    }
+
+    return null;
+};
+
+/**
+ * Валідація даних для редагування користувача
+ */
+export const validateUpdateUserData = (data: UpdateUserData): string | null => {
+    const username = data.username?.trim() ?? '';
+    const email = data.email?.trim();
+
+    if (!username) {
+        return "Поле 'Ім'я користувача' є обов'язковим.";
+    }
+
+    if (username.length > 150) {
+        return "Ім'я користувача має містити не більше 150 символів.";
+    }
+
+    if (!DJANGO_USERNAME_REGEX.test(username)) {
+        return "Ім'я користувача може містити лише літери, цифри та символи @ . + - _";
+    }
+
+    // Email перевіряємо тільки якщо він заповнений
+    if (email && !EMAIL_REGEX.test(email)) {
+        return "Вкажіть коректний email адрес.";
     }
 
     return null;

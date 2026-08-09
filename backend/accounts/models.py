@@ -8,7 +8,7 @@ from main.utils import custom_slugify
 
 class Account(AbstractUser, BaseModel):
     username = models.CharField(max_length=128, unique=True)
-    slug = AutoSlugField(populate_from="username", slugify=custom_slugify, unique=True, editable=False, auto_created=True)
+    slug = AutoSlugField(populate_from="username", slugify=custom_slugify, unique=True, editable=False, auto_created=True, always_update=True)
     bio = models.TextField(blank=True)
     avatar = models.ImageField(
         upload_to="avatars/",

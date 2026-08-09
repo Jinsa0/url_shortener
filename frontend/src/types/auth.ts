@@ -11,6 +11,15 @@ export interface User {
     avatar?: string | null;
 }
 
+export interface UpdateUserData {
+    username?: string;
+    email?: string;
+    first_name?: string;
+    last_name?: string;
+    bio?: string;
+    avatar?: File;
+}
+
 export interface AuthTokens {
     access: string;
     refresh: string;
@@ -39,6 +48,7 @@ export interface AuthContextType {
     tokens: AuthTokens | null;
     isLoading: boolean;
     login: (credentials: LoginCredentials) => Promise<void>;
+    updateUser: (data: UpdateUserData) => Promise<void>;
     register: (data: RegisterData) => Promise<void>;
     logout: () => void;
     refreshToken: () => Promise<void>;
